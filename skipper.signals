@@ -1,0 +1,138 @@
+* -*- C -*- */
+/** ---------------------------------------------------------------------------
+ * @file   skipper.signals
+ * @brief  Skipper CCD signal names and module/channel assignments
+ * @author   Stephen Kaye
+ * @date     2024-07-03 (created)
+ * @modified
+ * 
+ * syntax:
+ *
+ * #define signallabel slot : channel
+ *
+ * where signallabel   is any ASCII text string to identify the signal name
+ *       slot          is the slot number containing the module,
+ *       channel       is the channel number on the module
+ * 
+ * Combinations of signals can also be made by creating a comma-separated
+ * list enclosed in square brackets as follows:
+ *
+ * #define newlabel [ signallabel, signallabel [, signallabel] ]
+ *
+ * where newlabel    is any ASCII text string to define a new signal
+ *       signallabel is any signal already defined above
+ *
+ * any number can be combined in a comma-separated list between square brackets,
+ * or a single signal can be defined in square brackets to effectively asign
+ * a different name to the signal
+ *
+ */
+
+#define SHUTTER	0 : 1  /* INT signal from the backplane - controls the shutter	*/
+#define FRAME	0 : 2  /* FRAME signal from the backplane			*/
+#define LINE	0 : 3  /* LINE signal from the backplane			*/
+#define PIXEL	0 : 4  /* PIXEL signal from the backplane			*/
+                
+#define RGUL	3 : 1  /* Reset gate (Upper left) 	        */
+#define RGUR	3 : 2  /* Reset gate (Upper right)       	*/
+#define RGLL	3 : 3  /* Reset gate (Lower left)        	*/
+#define RGLR	3 : 4  /* Reset gate (Lower right)       	*/
+#define Spare1	3 : 5  /* Spare clock channel      		*/
+#define Spare2	3 : 6  /* Spare clock channel      		*/
+#define Spare3	3 : 7  /* Spare clock channel      		*/
+#define Spare4  3 : 8  /* Spare clock channel                   */
+                
+#define P2U	4 : 1 /* Parallel phase 2 (Upper half)                 */
+#define P2L	4 : 2 /* Parallel phase 2 (Lower half)       	       */
+#define S1U	4 : 3 /* Serial phase 1 (Upper serial)                 */
+#define S1L	4 : 4 /* Serial phase 1 (Lower serial)                 */
+#define S3U	4 : 5 /* Serial phase 3 (Upper serial)                 */
+#define S3L	4 : 6 /* Serial phase 3 (Lower serial)      	       */
+#define S2	4 : 7 /* Serial phase 2 (Upper and lower serials)      */
+#define Spare5	4 : 8 /* Spare clock channel                           */
+                
+#define AD5	5 : 1 /* AD board in slot 5.  Access to the clamp      */
+
+/* These are the biases which can now be commanded in states           */
+#define RDUL      9 : 1  /* Reset Drain (Upper left)                    */
+#define RDUR      9 : 2  /* Reset Drain (Upper right)                   */
+#define RDLL      9 : 3  /* Reset Drain (Lower left)                    */
+#define RDLR      9 : 4  /* Reset Drain (Lower right)                   */
+
+                
+#define OGUL	10 : 1 /* Output gate (Upper left)	               */
+#define OGUR	10 : 2 /* Output gate (Upper right)	               */
+#define OGLL	10 : 3 /* Output gate (Lower left)                     */
+#define OGLR	10 : 4 /* Output gate (Lower right)                    */
+#define DGUL	10 : 5 /* Dump gate (Upper left)                       */
+#define DGUR	10 : 6 /* Dump gate (Upper right)                      */
+#define DGLL	10 : 7 /* Dump gate (Lower left)	               */
+#define DGLR	10 : 8 /* Dump gate (Lower right)                      */
+                
+#define SWUL	11 : 1 /* Summing well (Upper left)                    */
+#define SWUR	11 : 2 /* Summing well (Upper right)	               */
+#define SWLL	11 : 3 /* Summing well (Lower left )     	       */
+#define SWLR	11 : 4 /* Summing well (Lower right)                   */
+#define TGUL	11 : 5 /* Transfer gate (Upper left)                   */
+#define TGUR	11 : 6 /* Transfer gate (Upper right)                  */
+#define TGLL	11 : 7 /* Transfer gate (Lower left)     	       */
+#define TGLR	11 : 8 /* Transfer gate (Lower right)                  */
+
+#define P1UL	12 : 1 /* Parallel phase 1 (Upper left)                */
+#define P1UR	12 : 2 /* Parallel phase 1 (Upper right)	       */
+#define P1LL	12 : 3 /* Parallel phase 1 (Lower left )     	       */
+#define P1LR	12 : 4 /* Parallel phase 1 (Lower right)               */
+#define P3UL	12 : 5 /* Parallel phase 3 (Upper left)                */
+#define P3UR	12 : 6 /* Parallel phase 3 (Upper right)               */
+#define P3LL	12 : 7 /* Parallel phase 3 (Lower left)     	       */
+#define P3LR	12 : 8 /* Parallel phase 3 (Lower right)               */
+
+
+/* Parallel Clocks: Upper and Lower */
+/* Upper half */
+#define V1A [P1UL,P1UR]
+#define V3A [P3UL,P3UR]
+/* Lower half */
+#define V1B [P1LL,P1LR]
+#define V3B [P3LL,P3LR]
+
+#define V2 [P2U, P2L]
+
+/* Need to determine phase layout for skipper to know if these pairings work */                
+#define SplitClock1  [S1a,S1b,S1c,S1d]
+#define SplitClock2  [S2a,S2b,S2c,S3d]
+#define SplitClock3  [S3a,S3b,S3c,S3d]
+
+#define RightSClock1 [S1a,S1b,S1c,S1d]
+#define RightSClock2 [S3a,S2b,S3c,S2d]
+#define RightSClock3 [S2a,S3b,S2c,S3d]
+
+#define LeftSClock1 [S1a,S1b,S1c,S1d]
+#define LeftSClock2 [S2a,S3b,S2c,S3d]
+#define LeftSClock3 [S3a,S2b,S3c,S2d]
+
+#define ADCCLAMP  [AD5]
+
+/* Select amplifiers in use here: */
+#define Ampa 1
+#define Ampb 1
+#define Ampc 1
+#define Ampd 1
+
+#if ((Ampa || Ampb) && (Ampc || Ampd)) /* Split frame clocking */
+#define P1 [A1x,A1y]
+#define P2 [A2x,A2y]
+#define P3 [A3x,A3y]
+#endif
+
+#if ((AmpE || AmpF) && !(AmpG || AmpH)) /* Full frame downwards */
+#define P1 [A1x,A1y]
+#define P2 [A3x,A2y]
+#define P3 [A2x,A3y]
+#endif
+
+#if (!(AmpE || AmpF) && (AmpG || AmpH)) /* Full frame upwards */
+#define P1 [A1x,A1y]
+#define P2 [A2x,A3y]
+#define P3 [A3x,A2y]
+#endif
