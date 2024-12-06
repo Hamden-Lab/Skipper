@@ -33,6 +33,7 @@
 
 /* This is for concurrent clocking, but need to divide by 3 since only 3 parallel phases */
 #defeval _PIXBYTHREE             #eval (_IMAGECOLS + _SERIALPRESCAN + _SERIALOVERSCAN)/3
+#defeval _PIXBYFOUR             #eval (_IMAGECOLS + _SERIALPRESCAN + _SERIALOVERSCAN)/4
 #defeval NumReads                #eval (_SERIALPRESCAN + _IMAGECOLS + _SERIALOVERSCAN)/3 - 1  /* Number of reads in concurrent clocking */
 
 

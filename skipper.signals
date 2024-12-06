@@ -1,4 +1,4 @@
-* -*- C -*- */
+/* -*- C -*- */
 /** ---------------------------------------------------------------------------
  * @file   skipper.signals
  * @brief  Skipper CCD signal names and module/channel assignments
