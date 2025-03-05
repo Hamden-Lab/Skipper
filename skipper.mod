@@ -23,24 +23,49 @@
 #define ResetGateHi      8
 #define SummingWellHi    5
 
+/* wdl can compile xvbias card */
+SLOT 1 xvbias {
+  PV 1 [0];
+  PV 2 [0];
+  PV 3 [0];
+  PV 4 [0];
+  PN 1 [-20]; // These are Vdd (output drain)
+  PN 2 [-20]; // for all four amplifiers
+  PN 3 [-20];
+  PN 4 [-20];
+}
 
-SLOT 3 lvds {
-  DIO 1 [0,0];
-  DIO 2 [0,0];
-  DIO 3 [0,0];
-  DIO 4 [0,0];
-  DIOPOWER = 0;
+SLOT 2 xvbias {
+  PV 1 [70];  // Vsubstrate voltage - nominal
+  PV 2 [0];
+  PV 3 [0];
+  PV 4 [0];
+  PN 1 [-24]; // Dump drive voltage
+  PN 2 [-24];
+  PN 3 [-24];
+  PN 4 [-24];
+}
+
+SLOT 3 driver {
+  DRV 1 [Rphi_slew_fast,Rphi_slew_slow,1];  // Reset gate
+  DRV 2 [Rphi_slew_fast,Rphi_slew_slow,1];  // Reset gate
+  DRV 3 [Rphi_slew_fast,Rphi_slew_slow,1];  // Reset gate
+  DRV 4 [Rphi_slew_fast,Rphi_slew_slow,1];  // Reset gate
+  DRV 5 [Rphi_slew_fast,Rphi_slew_slow,1];  // Spare
+  DRV 6 [Rphi_slew_fast,Rphi_slew_slow,1];  // Spare
+  DRV 7 [BIAS_slew_fast,BIAS_slew_slow,1];  // Spare
+  DRV 8 [BIAS_slew_fast,BIAS_slew_slow,1];  // Spare
 }
 
 SLOT 4 driver {
-  DRV 1 [Rphi_slew_fast,Rphi_slew_slow,1];
-  DRV 2 [Rphi_slew_fast,Rphi_slew_slow,1];
-  DRV 3 [Rphi_slew_fast,Rphi_slew_slow,1];
-  DRV 4 [Rphi_slew_fast,Rphi_slew_slow,1];
-  DRV 5 [Rphi_slew_fast,Rphi_slew_slow,1];
-  DRV 6 [Rphi_slew_fast,Rphi_slew_slow,1];
-  DRV 7 [BIAS_slew_fast,BIAS_slew_slow,1];
-  DRV 8 [BIAS_slew_fast,BIAS_slew_slow,1];
+  DRV 1 [Rphi_slew_fast,Rphi_slew_slow,1];  // Parallel clock
+  DRV 2 [Rphi_slew_fast,Rphi_slew_slow,1];  // Parallel clock
+  DRV 3 [Rphi_slew_fast,Rphi_slew_slow,1];  // Serial clock
+  DRV 4 [Rphi_slew_fast,Rphi_slew_slow,1];  // Serial clock
+  DRV 5 [Rphi_slew_fast,Rphi_slew_slow,1];  // Serial clock
+  DRV 6 [Rphi_slew_fast,Rphi_slew_slow,1];  // Serial clock
+  DRV 7 [BIAS_slew_fast,BIAS_slew_slow,1];  // Serial clock
+  DRV 8 [BIAS_slew_fast,BIAS_slew_slow,1];  // Spare
 }
 
 SLOT 5 ad {
@@ -51,7 +76,9 @@ SLOT 5 ad {
   PREAMPGAIN = low;
 }
 
-SLOT 9 hvbias {
+/* This is a lvxbias card since it can go negative */
+/* Need to figure out how to know the cards wdl can compile */
+SLOT 9 lvbias {
   HVLC 1  [15,0]; /* Reset Drain a          */
   HVLC 2  [15,0]; /* Reset Drain b          */
   HVLC 3  [15,0]; /* Reset Drain c          */
@@ -96,6 +123,17 @@ SLOT 10 driver {
 }
 
 SLOT 11 driver {
+  DRV 1 [Rphi_slew_fast,Rphi_slew_slow,1];
+  DRV 2 [Rphi_slew_fast,Rphi_slew_slow,1];
+  DRV 3 [Rphi_slew_fast,Rphi_slew_slow,1];
+  DRV 4 [Rphi_slew_fast,Rphi_slew_slow,1];
+  DRV 5 [Rphi_slew_fast,Rphi_slew_slow,1];
+  DRV 6 [Rphi_slew_fast,Rphi_slew_slow,1];
+  DRV 7 [DG_slew_fast,DG_slew_slow,1];
+  DRV 8 [BIAS_slew_fast,BIAS_slew_slow,1];
+}
+
+SLOT 12 driver {
   DRV 1 [Rphi_slew_fast,Rphi_slew_slow,1];
   DRV 2 [Rphi_slew_fast,Rphi_slew_slow,1];
   DRV 3 [Rphi_slew_fast,Rphi_slew_slow,1];

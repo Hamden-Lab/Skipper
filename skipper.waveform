@@ -149,12 +149,34 @@
 //                        SET SClock3 TO _SER_CLOCK_LOW, FAST;
 //}                        
 //
-//WAVEFORM SerialReceiving {
-// 0:			SET SClock2 TO _SER_CLOCK_RCV, FAST;
-//			SET SClock1 TO _SER_CLOCK_RCV, FAST;
-//                        SET SClock3 TO _SER_CLOCK_LOW, FAST;
-// .+S2TORESET:		SET RGClock TO PhiRHigh;
-//}
+WAVEFORM SerialReceiving {
+ 0:			SET SClock2 TO _SER_CLOCK_RCV, FAST;
+			SET SClock1 TO _SER_CLOCK_RCV, FAST;
+                        SET SClock3 TO _SER_CLOCK_LOW, FAST;
+ .+S2TORESET:		SET RGClock TO PhiRHigh;
+}
+
+// Waveform ends with charge only in phase 3
+// setting V3 in the first state is probably unnecessary
+WAVEFORM SynchedParallelTransfer {
+ 0:                    SET V1    TO    _PAR_CLOCK_HIGH, FAST;
+                       SET V3    TO    _PAR_CLOCK_HIGH, FAST; 
+ .+TOI:                SET V3    TO    _PAR_CLOCK_LOW,  FAST;
+ .+TOI:                SET V2    TO    _PAR_CLOCK_HIGH, FAST;
+ .+TOI:                SET V1    TO    _PAR_CLOCK_LOW,  FAST;
+ .+TOI:                SET V3    TO    _PAR_CLOCK_HIGH, FAST;
+}
+
+// Serial 1 and serial 2 start high
+// Serial 1 and serial 2 end high
+WAVEFORM SerialShift {
+ 0:                    SET SClock1  TO  _SER_CLOCK_LOW,FAST; // Now only in serial 2
+  .+2us:               SET SClock3  TO  _SER_CLOCK_HIGH,FAST;
+  .+2us:               SET SClock2  TO  _SER_CLOCK_LOW,FAST;
+  .+2us:               SET SClock1  TO  _SER_CLOCK_HIGH,FAST;
+  .+2us:               SET SClock3  TO  _SER_CLOCK_LOW,FAST;
+  .+2us:               SET SClock2  TO  _SER_CLOCK_HIGH,FAST;
+}
 //
 ///* The waveform is spread out with no overlapping clocks */
 //WAVEFORM OldSerialOutputClocking {
@@ -443,6 +465,8 @@
 //}
 //
 //
+
+    
 ///* Data sheet Parallel Transfer */
 ///*WAVEFORM SynchedLineTransfer {
 ///* +TDRT:      		SET CD3     TO _PAR_CLOCK_HIGH, FAST;
@@ -773,24 +797,24 @@
 ///* Here are the control signal waveforms */
 ///*****************************************/
 //
-//WAVEFORM wOpenShutter {
-// 0:			SET SHUTTER TO OPEN;
-//}
-//WAVEFORM wCloseShutter {
-// 0:			SET SHUTTER TO CLOSE;
-//}
-//WAVEFORM wFrame {
-// 0:			SET FRAME TO High;
-//}
-//WAVEFORM wLine {
-// 0:			SET LINE TO High;
-//}
-//WAVEFORM wLine_triggered {
-// 0:                     SET SHUTTER TO OPEN;
-// 2000:                  SET SHUTTER TO CLOSE;
-//                        SET LINE TO High;
-//
-//}
+WAVEFORM wOpenShutter {
+ 0:			SET SHUTTER TO OPEN;
+}
+WAVEFORM wCloseShutter {
+ 0:			SET SHUTTER TO CLOSE;
+}
+WAVEFORM wFrame {
+ 0:			SET FRAME TO High;
+}
+WAVEFORM wLine {
+ 0:			SET LINE TO High;
+}
+WAVEFORM wLine_triggered {
+ 0:                     SET SHUTTER TO OPEN;
+ 2000:                  SET SHUTTER TO CLOSE;
+                        SET LINE TO High;
+
+}
 //WAVEFORM wPixel {
 // 0:			SET PIXEL   TO High;
 // .+TICK:		SET PIXEL   TO Low;

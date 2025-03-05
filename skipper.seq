@@ -36,25 +36,25 @@ param IdleLines=_IDLE_LINES
  * @brief  the main loop.  MAIN is implicitly an infinite loop.
  *
  */
-//SEQUENCE Start {
-//  wCloseShutter();
-//  SerialReceiving();      /* Put serials at nominal voltages   */
-//  SynchedLineTransfer();  /* Put parallels at nominal voltages */
-//
-//  /* Start with a reset of the sense node and clamping to that level */
-//  wReset();
-//  Wait1us();
-//  wUnsetReset();
-//  ADClamp();
-//  Wait1us();
-//  ADClamp_();
-//
-//  /*wDumpGateOn();*/
-//  /*wParallelInversion();*/
-//  /*wDumpGateOff();*/           /* suppresses the waffle pattern */
-//  Idling(IdleLines);                 /* clears the residual badness */
-//}
-//
+SEQUENCE Start {
+  wCloseShutter();
+  SerialReceiving();      /* Put serials at nominal voltages   */
+  SynchedLineTransfer();  /* Put parallels at nominal voltages */
+
+  /* Start with a reset of the sense node and clamping to that level */
+  wReset();
+  Wait1us();
+  wUnsetReset();
+  ADClamp();
+  Wait1us();
+  ADClamp_();
+
+  /*wDumpGateOn();*/
+  /*wParallelInversion();*/
+  /*wDumpGateOff();*/           /* suppresses the waffle pattern */
+  Idling(IdleLines);                 /* clears the residual badness */
+}
+
 //SEQUENCE WaitForExpose {
 //  Abort--;
 //  if Expose DoExpose();
