@@ -39,86 +39,71 @@ param IdleLines=_IDLE_LINES
 SEQUENCE Start {
   wCloseShutter();
   SerialReceiving();      /* Put serials at nominal voltages   */
-  SynchedLineTransfer();  /* Put parallels at nominal voltages */
+  ParallelTransfer();  /* Put parallels at nominal voltages */
 
   /* Start with a reset of the sense node and clamping to that level */
   wReset();
-  Wait1us();
-  wUnsetReset();
-  ADClamp();
-  Wait1us();
-  ADClamp_();
 
-  /*wDumpGateOn();*/
-  /*wParallelInversion();*/
-  /*wDumpGateOff();*/           /* suppresses the waffle pattern */
-  Idling(IdleLines);                 /* clears the residual badness */
+  /*Idling(IdleLines);*/  /* clears the residual badness */
+  GOTO WaitForExpose();
 }
 
-//SEQUENCE WaitForExpose {
-//  Abort--;
-//  if Expose DoExpose();
-//  Idling();
-//  /*wCloseShutter();*/ /* For ramped illumination */
-//  /*DoScienceReadout();*/  /***/
-//  /*return;*/              /***/
-//  GOTO WaitForExpose();
-//}
+SEQUENCE WaitForExpose {
+  Abort--;
+  if Expose DoExpose();
+  Idling();
+  /*wCloseShutter();*/ /* For ramped illumination */
+  /*DoScienceReadout();*/  /***/
+  /*return;*/              /***/
+  GOTO WaitForExpose();
+}
 //
 ///** ---------------------------------------------------------------------------
 // * @fn	    Idling
 // * @brief   Idle sequence to push one parallel line and read the full serial register
 // */
-//SEQUENCE Idling {
-//  ReadLineConcurrently();
-//
-//  /*SynchedLineTransfer();*/ /* Idle... to invert parallel shifting */
-//  /*TPixel(Pixels);*/
-//  /* Now go to nominal clock levels for the serial */
-//  SerialReceiving();
-//
-//  /* Do a reset sequence */
-//  wReset();
-//  Wait1us();
-//  wUnsetReset();
-//  ADClamp();
-//  Wait1us();
-//  ADClamp_();
-//
-//  return;
-//}
+SEQUENCE Idling {
+  ParallelTransfer();
+  /* Now go to nominal clock levels for the serial */
+  SerialReceiving();
+
+  /* Do a reset sequence */
+  wReset();
+
+  return;
+}
 //
 ///** ---------------------------------------------------------------------------
 // * @fn     DoExpose
 // * @brief  start an exposure
 // *
 // */
-//SEQUENCE DoExpose {
-//  Expose--;
-//  SetParallelExpose();
-//  if ShutterEnable OpenShutter();      // don't even try to open shutter unless enabled
-//  if exptime MilliSec(exptime);
-//  wCloseShutter();
-//  if exptime DoShutterDelay(shutdelay);
-//  DoScienceReadout();
-//  return;
-//}
+SEQUENCE DoExpose {
+  Expose--;
+  SetParallelExpose();
+  if ShutterEnable OpenShutter();      // don't even try to open shutter unless enabled
+  if exptime MilliSec(exptime);
+  wCloseShutter();
+  //  if exptime DoShutterDelay(shutdelay);
+  //  DoScienceReadout();
+  return;
+}
 //
-//SEQUENCE OpenShutter {
-//  if exptime wOpenShutter();           // only fire open shutter waveform for non-zero exposure times
-//  return;
-//}
+SEQUENCE OpenShutter {
+  if exptime wOpenShutter();           // only fire open shutter waveform for non-zero exposure times
+  return;
+}
 //
-//SEQUENCE MilliSec {
-//  Wait1ms();	/* This is a placeholder 1ms routine - Need to fix up */
-//  if Abort GOTO DoAbort();  /* This is the test for an abort  */
-//  return;
-//}
+SEQUENCE MilliSec {
+  //Wait1ms();	/* This is a placeholder 1ms routine - Need to fix up */
+  if Abort GOTO DoAbort();  /* This is the test for an abort  */
+  return;
+}
 //
-//SEQUENCE DoAbort {
-//  Abort--;
-//  GOTO WaitForExpose();
-//}
+SEQUENCE DoAbort {
+  Abort--;
+  GOTO WaitForExpose();
+}
 //
 //SEQUENCE DoShutterDelay {
 //  Wait1ms();

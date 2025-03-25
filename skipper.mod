@@ -25,25 +25,25 @@
 
 /* wdl can compile xvbias card */
 SLOT 1 xvbias {
-  PV 1 [0];
-  PV 2 [0];
-  PV 3 [0];
-  PV 4 [0];
-  PN 1 [-20]; // These are Vdd (output drain)
-  PN 2 [-20]; // for all four amplifiers
-  PN 3 [-20];
-  PN 4 [-20];
+  PBIAS 1 [0,0];
+  PBIAS 2 [0,0];
+  PBIAS 3 [0,0];
+  PBIAS 4 [0,0];
+  NBIAS 1 [0,-20]; // These are Vdd (output drain)
+  NBIAS 2 [0,-20]; // for all four amplifiers
+  NBIAS 3 [0,-20];
+  NBIAS 4 [0,-20];
 }
 
 SLOT 2 xvbias {
-  PV 1 [70];  // Vsubstrate voltage - nominal
-  PV 2 [0];
-  PV 3 [0];
-  PV 4 [0];
-  PN 1 [-24]; // Dump drive voltage
-  PN 2 [-24];
-  PN 3 [-24];
-  PN 4 [-24];
+  PBIAS 1 [0,70];  // Vsubstrate voltage - nominal
+  PBIAS 2 [0,0];
+  PBIAS 3 [0,0];
+  PBIAS 4 [0,0];
+  NBIAS 1 [0,-24]; // Dump drive voltage
+  NBIAS 2 [0,-24];
+  NBIAS 3 [0,-24];
+  NBIAS 4 [0,-24];
 }
 
 SLOT 3 driver {

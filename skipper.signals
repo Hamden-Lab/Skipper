@@ -99,17 +99,31 @@
 
 /* Use for full frame modes */
 #define V1 [P1UL,P1UR,P1LL,P1LR]
-#define V3 [[P3UL,P3UR,P3LL,P3LR]
+#define V3 [P3UL,P3UR,P3LL,P3LR]
 
 #define V2 [P2U, P2L]
+
+/* Transfer Gates */
+#define TG [TGUL, TGUR, TGLL, TGLR]
 
 /* Serial Clocks */
 #define SClock1    [S1U, S1L]
 #define SClock2    [S2]
 #define SClock3    [S3U, S3L]
 
+/* Summing Well Clocks */
+#define SWClock    [SWUL, SWUR, SWLL, SWLR]
+
 /* Reset gate clock */
 #define RGClock [RGUL, RGUR, RGLL, RGLR]
 
+/* Dump gate clock (different than conventional dump gate) */
+#define DGClock [DGUL, DGUR, DGLL, DGLR]
+
+/* Output gate clock (different than conventional output gate) */
+#define OGClock [OGUL, OGUR, OGLL, OGLR]
+
+
+/* ADC Card clamp */
 #define ADCCLAMP  [AD5]
 

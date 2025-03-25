@@ -77,6 +77,7 @@
 #define _SER1_CLOCK_HIGH    -2.0
 #define _SER2_CLOCK_HIGH    -2.0
 #define _SER3_CLOCK_HIGH    -2.0
+#define _SER_CLOCK_RCV      -2.0
 #define _SER_CLOCK_HIGH     -2.0
 
 /* Parallel Clocks */
