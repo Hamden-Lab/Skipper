@@ -79,36 +79,36 @@ SLOT 5 ad {
 /* This is a lvxbias card since it can go negative */
 /* Need to figure out how to know the cards wdl can compile */
 SLOT 9 lvbias {
-  HVLC 1  [15,0]; /* Reset Drain a          */
-  HVLC 2  [15,0]; /* Reset Drain b          */
-  HVLC 3  [15,0]; /* Reset Drain c          */
-  HVLC 4  [15,0]; /* Reset Drain d          */
-  HVLC 5  [0,0];  /* Spare                  */
-  HVLC 6  [0,0];  /* Spare                  */
-  HVLC 7  [0,0];  /* Spare                  */
-  HVLC 8  [0,0];  /* Spare                  */
-  HVLC 9  [0,0];  /* Spare                  */
-  HVLC 10 [0,0];  /* Spare                  */
-  HVLC 11 [ResetGateHi,0];    /* Reset Gate High Rail   */
-  HVLC 12 [SummingWellHi,0];  /* Summing Well High Rail */
-  HVLC 13 [0,0];  /* Spare                  */
-  HVLC 14 [0,0];  /* Spare                  */
-  HVLC 15 [0,0];  /* Spare                  */
-  HVLC 16 [0,0];  /* Spare                  */
-  HVLC 17 [0,0];  /* Spare                  */
-  HVLC 18 [0,0];  /* Spare                  */
-  HVLC 19 [0,0];  /* Spare                  */
-  HVLC 20 [0,0];  /* Spare                  */
-  HVLC 21 [0,0];  /* Spare                  */
-  HVLC 22 [0,0];  /* Spare                  */
-  HVLC 23 [0,0];  /* Spare                  */
-  HVLC 24 [0,0];  /* Dump Drain All Quads   */
-  HVHC  1 [0,10,0,1];   /* Spare                         */
-  HVHC  2 [0,10,0,1];   /* Spare                         */
-  HVHC  3 [24,100,0,1]; /* Output Drain Top Left     (a) */
-  HVHC  4 [24,100,0,1]; /* Output Drain Top Right    (b) */
-  HVHC  5 [24,100,0,1]; /* Output Drain Bottom Right (c) */
-  HVHC  6 [24,100,0,1]; /* Output Drain Bottom Left  (d) */
+  LVLC 1  [1,0]; /* Reset Drain a          */
+  LVLC 2  [1,0]; /* Reset Drain b          */
+  LVLC 3  [1,0]; /* Reset Drain c          */
+  LVLC 4  [1,0]; /* Reset Drain d          */
+  LVLC 5  [0,0];  /* Spare                  */
+  LVLC 6  [0,0];  /* Spare                  */
+  LVLC 7  [0,0];  /* Spare                  */
+  LVLC 8  [0,0];  /* Spare                  */
+  LVLC 9  [0,0];  /* Spare                  */
+  LVLC 10 [0,0];  /* Spare                  */
+  LVLC 11 [0,0];    /* Reset Gate High Rail   */
+  LVLC 12 [0,0];  /* Summing Well High Rail */
+  LVLC 13 [0,0];  /* Spare                  */
+  LVLC 14 [0,0];  /* Spare                  */
+  LVLC 15 [0,0];  /* Spare                  */
+  LVLC 16 [0,0];  /* Spare                  */
+  LVLC 17 [0,0];  /* Spare                  */
+  LVLC 18 [0,0];  /* Spare                  */
+  LVLC 19 [0,0];  /* Spare                  */
+  LVLC 20 [0,0];  /* Spare                  */
+  LVLC 21 [0,0];  /* Spare                  */
+  LVLC 22 [0,0];  /* Spare                  */
+  LVLC 23 [0,0];  /* Spare                  */
+  LVLC 24 [0,0];  /* Dump Drain All Quads   */
+  LVHC  1 [0,10,0,1];   /* Spare                         */
+  LVHC  2 [0,10,0,1];   /* Spare                         */
+  LVHC  3 [14,100,0,1]; /* Output Drain Top Left     (a) */
+  LVHC  4 [14,100,0,1]; /* Output Drain Top Right    (b) */
+  LVHC  5 [14,100,0,1]; /* Output Drain Bottom Right (c) */
+  LVHC  6 [14,100,0,1]; /* Output Drain Bottom Left  (d) */
 }
 
 SLOT 10 driver {
