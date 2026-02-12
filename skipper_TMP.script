@@ -14,91 +14,167 @@ Lines=2090
 Pixels=2074
 PxByFour=518
 IdleLines=2040
+Skips=10
 [LINE#]
 Start: # sequence
-STATE000; CALL wCloseShutter                #      0        2
-STATE000; CALL SerialReceiving              #      1        4
-STATE000; CALL ParallelTransfer             #      2    30006
-STATE000; CALL wReset                       #      3    35008
-STATE000; GOTO WaitForExpose                #      4    35009
+STATE000; CALL wCloseShutter                        #      0        2
+STATE000; CALL SerialReceiving                      #      1        4
+STATE000; CALL ParallelTransfer                     #      2    30006
+STATE000; CALL wReset                               #      3    30008
+STATE000; GOTO WaitForExpose                        #      4    30009
 WaitForExpose: # sequence
-STATE000; Abort--                           #      1        2
-STATE000; if Expose CALL DoExpose           #      2       17
-STATE000; CALL Idling                       #      3    35025
-STATE000; GOTO WaitForExpose                #      4    35026
+STATE000; Abort--                                   #      1        2
+STATE000; if Expose CALL DoExpose                   #      2   121947
+STATE000; CALL Idling                               #      3   151955
+STATE000; GOTO WaitForExpose                        #      4   151956
 Idling: # sequence
-STATE000; CALL ParallelTransfer             #      0    30002
-STATE000; CALL SerialReceiving              #      1    30004
-STATE000; CALL wReset                       #      2    35006
-STATE000; RETURN Idling                     #      3    35007
+STATE000; CALL ParallelTransfer                     #      0    30002
+STATE000; CALL SerialReceiving                      #      1    30004
+STATE000; CALL wReset                               #      2    30006
+STATE000; RETURN Idling                             #      3    30007
 DoExpose: # sequence
-STATE000; Expose--                          #      1        2
-STATE000; CALL SetParallelExpose            #      2        4
-STATE000; if ShutterEnable CALL OpenShutter #      3        8
-STATE000; if exptime CALL MilliSec(exptime) #      4       11
-STATE000; CALL wCloseShutter                #      5       13
-STATE000; RETURN DoExpose                   #      6       14
+STATE000; Expose--                                  #      1        2
+STATE000; CALL SetParallelExpose                    #      2        4
+STATE000; if ShutterEnable CALL OpenShutter         #      3        8
+STATE000; if exptime CALL MilliSec(exptime)         #      4       11
+STATE000; CALL wCloseShutter                        #      5       13
+STATE000; if exptime CALL DoShutterDelay(shutdelay) #      6   100013
+STATE000; CALL DoScienceReadout                     #      7   121943
+STATE000; RETURN DoExpose                           #      8   121944
 OpenShutter: # sequence
-STATE000; if exptime CALL wOpenShutter      #      0        2
-STATE000; RETURN OpenShutter                #      1        3
+STATE000; if exptime CALL wOpenShutter              #      0        2
+STATE000; RETURN OpenShutter                        #      1        3
 MilliSec: # sequence
-STATE000; if Abort GOTO DoAbort             #      0        1
-STATE000; RETURN MilliSec                   #      1        2
+STATE000; if Abort GOTO DoAbort                     #      0        1
+STATE000; RETURN MilliSec                           #      1        2
 DoAbort: # sequence
-STATE000; Abort--                           #      1        2
-STATE000; GOTO WaitForExpose                #      2        3
+STATE000; Abort--                                   #      1        2
+STATE000; GOTO WaitForExpose                        #      2        3
+DoShutterDelay: # sequence
+STATE000; CALL Wait1ms                              #      0    99998
+STATE000; RETURN DoShutterDelay                     #      1    99999
+DoScienceReadout: # sequence
+STATE000; CALL HorizontalStepNoConvert(Pixels)      #      0     5703
+STATE000; CALL wReset                               #      1     5705
+STATE000; CALL Wait1us                              #      2     5806
+STATE000; CALL ADClamp                              #      3     5808
+STATE000; CALL Wait1us                              #      4     5909
+STATE000; CALL ADClamp_                             #      5     5911
+STATE000; CALL wFrame                               #      6     5913
+STATE000; CALL ScienceReadLTA(SplitLines)           #      7    21926
+STATE000; CALL SerialReceiving                      #      8    21928
+STATE000; RETURN DoScienceReadout                   #      9    21929
+ScienceReadLTA: # sequence
+STATE000; CALL Vertical                             #      0     5002
+STATE000; CALL wLine                                #      1     5004
+STATE000; CALL PixelAndSkip(Pixels)                 #      2    16011
+STATE000; RETURN ScienceReadLTA                     #      3    16012
+PixelAndSkip: # sequence
+STATE000; CALL HorizontalStepToConvert              #      0     5703
+STATE000; CALL wSkipper(Skips)                      #      1    11005
+STATE000; RETURN PixelAndSkip                       #      2    11006
+Wait1ms: # waveform
+STATE000; STATE000(99995)                           #  99995    99996
+STATE000; RETURN Wait1ms                            #  99996    99997
+Wait1us: # waveform
+STATE000; STATE000(98)                              #     98       99
+STATE000; RETURN Wait1us                            #     99      100
+Wait25us: # waveform
+STATE000; STATE000(2498)                            #   2498     2499
+STATE000; RETURN Wait25us                           #   2499     2500
 SerialReceiving: # waveform
-STATE001; RETURN SerialReceiving            #      0        1
+STATE001; RETURN SerialReceiving                    #      0        1
 SynchedParallelTransfer: # waveform
-STATE002; STATE000(4999)                    #   4999     5000
-STATE003; STATE000(4999)                    #   9999    10000
-STATE004; STATE000(4999)                    #  14999    15000
-STATE005; STATE000(4999)                    #  19999    20000
-STATE006; RETURN SynchedParallelTransfer    #  20000    20001
+STATE002; STATE000(4999)                            #   4999     5000
+STATE003; STATE000(4999)                            #   9999    10000
+STATE004; STATE000(4999)                            #  14999    15000
+STATE005; STATE000(4999)                            #  19999    20000
+STATE006; RETURN SynchedParallelTransfer            #  20000    20001
 SerialShift: # waveform
-STATE007; STATE000(199)                     #    199      200
-STATE008; STATE000(199)                     #    399      400
-STATE009; STATE000(199)                     #    599      600
-STATE010; STATE000(199)                     #    799      800
-STATE011; STATE000(199)                     #    999     1000
-STATE012; RETURN SerialShift                #   1000     1001
+STATE007; STATE000(199)                             #    199      200
+STATE008; STATE000(199)                             #    399      400
+STATE009; STATE000(199)                             #    599      600
+STATE010; STATE000(199)                             #    799      800
+STATE011; STATE000(199)                             #    999     1000
+STATE012; RETURN SerialShift                        #   1000     1001
+ExposeState: # waveform
+STATE013; RETURN ExposeState                        #      0        1
+Vertical: # waveform
+STATE014; STATE000(999)                             #    999     1000
+STATE003; STATE000(999)                             #   1999     2000
+STATE004; STATE000(999)                             #   2999     3000
+STATE005; STATE000(999)                             #   3999     4000
+STATE006; STATE000(999)                             #   4999     5000
+STATE015; RETURN Vertical                           #   5000     5001
+HorizontalStepToConvert: # waveform
+STATE016; STATE000(99)                              #     99      100
+STATE017; STATE000(99)                              #    199      200
+STATE018; STATE000(1499)                            #   1699     1700
+STATE019; STATE000(999)                             #   2699     2700
+STATE020; STATE000(999)                             #   3699     3700
+STATE009; STATE000(999)                             #   4699     4700
+STATE021; STATE000(999)                             #   5699     5700
+STATE022;                                           #   5700     5701
+STATE023; RETURN HorizontalStepToConvert            #   5701     5702
+HorizontalStepNoConvert: # waveform
+STATE016; STATE000(99)                              #     99      100
+STATE017; STATE000(99)                              #    199      200
+STATE018; STATE000(1499)                            #   1699     1700
+STATE019; STATE000(999)                             #   2699     2700
+STATE020; STATE000(999)                             #   3699     3700
+STATE009; STATE000(999)                             #   4699     4700
+STATE021; STATE000(999)                             #   5699     5700
+STATE024;                                           #   5700     5701
+STATE023; RETURN HorizontalStepNoConvert            #   5701     5702
+wSkipper: # waveform
+STATE025; STATE000(2499)                            #   2499     2500
+STATE026; STATE000(99)                              #   2599     2600
+STATE027; STATE000(2499)                            #   5099     5100
+STATE028; STATE000(99)                              #   5199     5200
+STATE029; STATE000(99)                              #   5299     5300
+STATE023; RETURN wSkipper                           #   5300     5301
 wOpenShutter: # waveform
-STATE013; RETURN wOpenShutter               #      0        1
+STATE030; RETURN wOpenShutter                       #      0        1
 wCloseShutter: # waveform
-STATE014; RETURN wCloseShutter              #      0        1
+STATE031; RETURN wCloseShutter                      #      0        1
 wFrame: # waveform
-STATE015; RETURN wFrame                     #      0        1
+STATE032; RETURN wFrame                             #      0        1
 wLine: # waveform
-STATE016; RETURN wLine                      #      0        1
+STATE033; RETURN wLine                              #      0        1
 wLine_triggered: # waveform
-STATE013; STATE000(1999)                    #   1999     2000
-STATE017; RETURN wLine_triggered            #   2000     2001
+STATE030; STATE000(1999)                            #   1999     2000
+STATE034; RETURN wLine_triggered                    #   2000     2001
+ADClamp: # waveform
+STATE035; RETURN ADClamp                            #      0        1
+ADClamp_: # waveform
+STATE036; RETURN ADClamp_                           #      0        1
 wIdle: # waveform
-STATE000; RETURN wIdle                      #      0        1
+STATE000; RETURN wIdle                              #      0        1
 SetParallelExpose: # waveform
-STATE018; RETURN SetParallelExpose          #      0        1
+STATE037; RETURN SetParallelExpose                  #      0        1
 SerialTransfer: # waveform
-STATE019; STATE000(4999)                    #   4999     5000
-STATE012; STATE000(4999)                    #   9999    10000
-STATE020; STATE000(4999)                    #  14999    15000
-STATE021; STATE000(4999)                    #  19999    20000
-STATE009; STATE000(4999)                    #  24999    25000
-STATE022; RETURN SerialTransfer             #  25000    25001
+STATE017; STATE000(4999)                            #   4999     5000
+STATE012; STATE000(4999)                            #   9999    10000
+STATE019; STATE000(4999)                            #  14999    15000
+STATE020; STATE000(4999)                            #  19999    20000
+STATE009; STATE000(4999)                            #  24999    25000
+STATE021; RETURN SerialTransfer                     #  25000    25001
 wReset: # waveform
-STATE023; STATE000(4999)                    #   4999     5000
-STATE024; RETURN wReset                     #   5000     5001
+STATE024; RETURN wReset                             #      0        1
+wUnsetReset: # waveform
+STATE038; RETURN wUnsetReset                        #      0        1
 SkipperSamples: # waveform
-STATE000; STATE000(4999)                    #   4999     5000
-STATE025; STATE000(499)                     #   5499     5500
-STATE026; STATE000(4999)                    #  10499    10500
-STATE027; STATE000(499)                     #  10999    11000
-STATE028; STATE000(4999)                    #  15999    16000
-STATE029; RETURN SkipperSamples             #  16000    16001
+STATE000; STATE000(99)                              #     99      100
+STATE035; STATE000(499)                             #    599      600
+STATE039; STATE000(4999)                            #   5599     5600
+STATE040; STATE000(499)                             #   6099     6100
+STATE041; STATE000(4999)                            #  11099    11100
+STATE029; RETURN SkipperSamples                     #  11100    11101
 ParallelTransfer: # waveform
-STATE030; STATE000(4999)                    #   4999     5000
-STATE003; STATE000(4999)                    #   9999    10000
-STATE004; STATE000(4999)                    #  14999    15000
-STATE005; STATE000(4999)                    #  19999    20000
-STATE006; STATE000(4999)                    #  24999    25000
-STATE031; STATE000(4999)                    #  29999    30000
-STATE032; RETURN ParallelTransfer           #  30000    30001
+STATE042; STATE000(4999)                            #   4999     5000
+STATE003; STATE000(4999)                            #   9999    10000
+STATE004; STATE000(4999)                            #  14999    15000
+STATE005; STATE000(4999)                            #  19999    20000
+STATE006; STATE000(4999)                            #  24999    25000
+STATE015; STATE000(4999)                            #  29999    30000
+STATE043; RETURN ParallelTransfer                   #  30000    30001

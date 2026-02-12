@@ -39,6 +39,7 @@
 #define 1ms	      #eval 99997 clicks	  /* 999 usec */
 #define 1us           #eval 1 us
 #define 2us           #eval 2 us
+#define 15us          #eval 15 us
 #define 20us          #eval 20 us
 #define 25us          #eval 25 us
 #define 10ms          #eval 10 ms
@@ -49,7 +50,8 @@
 #define P_Overlap     #eval 50  us
 #define RG_Width      #eval 50  us
 #define SW_Width      #eval 50  us
-#define RG_Settle     #eval 50  us
+//#define RG_Settle     #eval 50  us
+#define RG_Settle     #eval 1  us
 #define SW_Settle     #eval 50  us
 #define OG_Width      #eval 50  us
 #define TG_Width      #eval 50  us
@@ -123,18 +125,18 @@
 #define LO		    0
 
 
-//WAVEFORM Wait1ms {
-// 1ms:			RETURN;
-//}
-//
-//WAVEFORM Wait1us {
-// 1us:			RETURN;
-//}
-//
-//WAVEFORM Wait25us {
-//  +25us:                RETURN;
-//}
-//
+WAVEFORM Wait1ms {
+ 1ms:			RETURN;
+}
+
+WAVEFORM Wait1us {
+ 1us:			RETURN;
+}
+
+WAVEFORM Wait25us {
+  +25us:                RETURN;
+}
+
 //WAVEFORM SyncParallel {
 // 0:			SET CD3     TO _PAR_CLOCK_HIGH, FAST;
 //			SET CD4     TO _PAR_CLOCK_HIGH, FAST;
@@ -190,6 +192,135 @@ WAVEFORM SerialShift {
   .+2us:               SET SClock1  TO  _SER_CLOCK_HIGH,FAST;
   .+2us:               SET SClock3  TO  _SER_CLOCK_LOW,FAST;
   .+2us:               SET SClock2  TO  _SER_CLOCK_HIGH,FAST;
+}
+
+// The following waveforms are from the LTA scripts
+// This is a good place to start and then we'll tweak an optimize ourselves
+// To get best results
+// Best results: Low noise regular readout
+// Fast skipping
+// quick reduction in noise (fewest skips for electron sensing)
+// Think on HD1 and HD2.  I think these are LTA only signals
+// which mark the beginning of analog conversions.
+
+// STATE_16 from LTA
+WAVEFORM ExposeState {
+ 0:                   SET V3        TO _PAR_CLOCK_HIGH, FAST;
+                      SET SClock1   TO _SER_CLOCK_HIGH, FAST;
+                      SET RGClock   TO _RG_CLOCK_HIGH, FAST;
+                      SET OGClock   TO _OG_CLOCK_HIGH, FAST;
+                      SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+                      SET TG        TO _TG_CLOCK_HIGH, FAST;
+}
+
+// Put the vertical waveform from the LTA in here
+// STATEs 11,12,13,14,15,16
+WAVEFORM Vertical {
+ 0:                  SET V1        TO _PAR_CLOCK_HIGH, FAST;
+                     SET V2        TO _PAR_CLOCK_LOW, FAST;
+                     SET V3        TO _PAR_CLOCK_HIGH, FAST;
+		     SET SClock1   TO _SER_CLOCK_HIGH, FAST;
+		     SET SClock2   TO _SER_CLOCK_LOW, FAST;
+		     SET SClock3   TO _SER_CLOCK_HIGH, FAST;
+		     SET SWClock   TO _SW_CLOCK_LOW, FAST;
+		     SET RGClock   TO _RG_CLOCK_HIGH, FAST;
+                     SET OGClock   TO _OG_CLOCK_HIGH, FAST;
+                     SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+		     SET TG        TO _TG_CLOCK_LOW, FAST;
+ .+10us:             SET V3        TO _PAR_CLOCK_LOW, FAST; // STATE_12
+ .+10us:             SET V2        TO _PAR_CLOCK_HIGH, FAST; // STATE_13
+ .+10us:             SET V1        TO _PAR_CLOCK_LOW, FAST; // STATE_14
+ .+10us:             SET V3        TO _PAR_CLOCK_HIGH, FAST; // STATE_15
+ .+10us:             SET V2        TO _PAR_CLOCK_LOW, FAST; // STATE_16
+		     SET TG        TO _TG_CLOCK_HIGH, FAST;
+}
+
+// STATEs 9, 3DG, 4, 5,, 6, 7, 8, 10RG
+WAVEFORM HorizontalStepToConvert {
+ 0:                  SET V1        TO _PAR_CLOCK_HIGH, FAST; // STATE_9
+                     SET V2        TO _PAR_CLOCK_LOW, FAST;
+                     SET V3        TO _PAR_CLOCK_HIGH, FAST;
+                     SET SClock1   TO _SER_CLOCK_HIGH, FAST;
+		     SET SClock2   TO _SER_CLOCK_LOW, FAST;
+		     SET SClock3   TO _SER_CLOCK_HIGH, FAST;
+		     SET SWClock   TO _SW_CLOCK_HIGH, FAST;
+		     SET RGClock   TO _RG_CLOCK_HIGH, FAST;
+                     SET OGClock   TO _OG_CLOCK_HIGH, FAST;
+                     SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+		     SET TG        TO _TG_CLOCK_HIGH, FAST;
+ .+1us:              SET S1L       TO _SER_CLOCK_LOW, FAST;  // STATE_3DG
+		     SET S3U       TO _SER_CLOCK_LOW, FAST;
+		     SET DGClock   TO _DG_CLOCK_LOW, FAST;
+ .+1us:              SET SClock2   TO _SER_CLOCK_HIGH, FAST; // STATE_4
+		     SET SWClock   TO _SW_CLOCK_LOW, FAST;
+		     SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+ .+15us:             SET S1U       TO _SER_CLOCK_LOW, FAST;  // STATE_5
+		     SET S3L       TO _SER_CLOCK_LOW, FAST;
+ .+10us:             SET S1L       TO _SER_CLOCK_HIGH, FAST; // STATE_6
+		     SET S3U       TO _SER_CLOCK_HIGH, FAST;
+ .+10us:             SET SClock2   TO _SER_CLOCK_LOW, FAST;  // STATE_7
+ .+10us:             SET S1U       TO _SER_CLOCK_HIGH, FAST; // STATE_8
+		     SET S3L       TO _SER_CLOCK_HIGH, FAST;
+ .+10us:             SET RGClock   TO _RG_CLOCK_LOW, FAST;  // STATE_10RG
+                     SET PIXEL     TO Low;
+                     SET LINE      TO Low;
+                     SET FRAME     TO Low;
+ .+1:                SET NOP       TO _CLOCK_NOP, FAST;
+}
+
+WAVEFORM HorizontalStepNoConvert {
+ 0:                  SET V1        TO _PAR_CLOCK_HIGH, FAST; // STATE_9
+                     SET V2        TO _PAR_CLOCK_LOW, FAST;
+                     SET V3        TO _PAR_CLOCK_HIGH, FAST;
+                     SET SClock1   TO _SER_CLOCK_HIGH, FAST;
+		     SET SClock2   TO _SER_CLOCK_LOW, FAST;
+		     SET SClock3   TO _SER_CLOCK_HIGH, FAST;
+		     SET SWClock   TO _SW_CLOCK_HIGH, FAST;
+		     SET RGClock   TO _RG_CLOCK_HIGH, FAST;
+                     SET OGClock   TO _OG_CLOCK_HIGH, FAST;
+                     SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+		     SET TG        TO _TG_CLOCK_HIGH, FAST;
+ .+1us:              SET S1L       TO _SER_CLOCK_LOW, FAST;  // STATE_3DG
+		     SET S3U       TO _SER_CLOCK_LOW, FAST;
+		     SET DGClock   TO _DG_CLOCK_LOW, FAST;
+ .+1us:              SET SClock2   TO _SER_CLOCK_HIGH, FAST; // STATE_4
+		     SET SWClock   TO _SW_CLOCK_LOW, FAST;
+		     SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+ .+15us:             SET S1U       TO _SER_CLOCK_LOW, FAST;  // STATE_5
+		     SET S3L       TO _SER_CLOCK_LOW, FAST;
+ .+10us:             SET S1L       TO _SER_CLOCK_HIGH, FAST; // STATE_6
+		     SET S3U       TO _SER_CLOCK_HIGH, FAST;
+ .+10us:             SET SClock2   TO _SER_CLOCK_LOW, FAST;  // STATE_7
+ .+10us:             SET S1U       TO _SER_CLOCK_HIGH, FAST; // STATE_8
+		     SET S3L       TO _SER_CLOCK_HIGH, FAST;
+ .+10us:             SET RGClock   TO _RG_CLOCK_LOW, FAST;  // STATE_10RG
+ .+1:                SET NOP       TO _CLOCK_NOP, FAST;
+}
+
+// STATEs 8B, 9, 10A, 10RB, 10RG
+WAVEFORM wSkipper {
+ 0:                  SET V1        TO _PAR_CLOCK_HIGH, FAST; // STATE_8B (take out of reset and then begin pedestal sampling)
+                     SET V2        TO _PAR_CLOCK_LOW, FAST;
+                     SET V3        TO _PAR_CLOCK_HIGH, FAST;
+                     SET SClock1   TO _SER_CLOCK_HIGH, FAST;
+		     SET SClock2   TO _SER_CLOCK_LOW, FAST;
+		     SET SClock3   TO _SER_CLOCK_HIGH, FAST;
+		     SET SWClock   TO _SW_CLOCK_LOW, FAST;
+		     SET RGClock   TO _RG_CLOCK_HIGH, FAST;
+                     SET OGClock   TO _OG_CLOCK_HIGH, FAST;
+                     SET DGClock   TO _DG_CLOCK_HIGH, FAST;
+		     SET TG        TO _TG_CLOCK_HIGH, FAST;
+                     SET PIXEL     TO High; // Begins recording a pixel wrt to CDS parameters
+ .+25us:             SET SWClock   TO _SW_CLOCK_HIGH, FAST; // STATE_9
+ .+1us:              SET SWClock   TO _SW_CLOCK_LOW, FAST;  // STATE_10A (begin signal sampling)
+ .+25us:             SET RGClock   TO _RG_CLOCK_LOW, FAST; // STATE_10RB Move charge back to SW, but also resetting node - floating gate makes this ok?
+		     SET OGClock   TO _OG_CLOCK_LOW, FAST;
+                     SET PIXEL     TO Low;
+                     SET LINE      TO Low;
+                     SET FRAME     TO Low;
+ .+1us:              SET OGClock   TO _OG_CLOCK_HIGH, FAST; // STATE_10RG (allow for chage back to sense node when SW goes high)
+ .+1us:              SET NOP       TO _CLOCK_NOP, FAST; // Delay for RG width
+
 }
 //
 ///* The waveform is spread out with no overlapping clocks */
@@ -261,15 +392,15 @@ WAVEFORM wLine_triggered {
 //			SET FRAME   TO Low;
 //			SET LINE    TO Low;
 //}
-//
-//WAVEFORM ADClamp {
-// 0:			SET AD5     TO High;
-//}
-//
-//WAVEFORM ADClamp_ {
-// 0:			SET AD5     TO leftClamped;
-//}
-//
+
+WAVEFORM ADClamp {
+ 0:			SET AD5     TO High;
+}
+
+WAVEFORM ADClamp_ {
+ 0:			SET AD5     TO leftClamped;
+}
+
 ///* Magic board comm waveforms */
 //// TXFRCLK is in signals
 ///*#define HBIT 25
@@ -347,7 +478,10 @@ WAVEFORM SerialTransfer {
 
 WAVEFORM wReset {
   0:              SET RGClock TO _RG_CLOCK_LOW,   FAST;  // STATE_10RG
- .+RG_Width:     SET RGClock TO _RG_CLOCK_HIGH,  FAST;  // back to STATE_8
+}
+
+WAVEFORM wUnsetReset {
+ 0:               SET RGClock to _RG_CLOCK_HIGH, FAST;
 }
 
 WAVEFORM SkipperSamples {

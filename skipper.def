@@ -12,6 +12,8 @@
 
 #define _SHDEL                   470       /* miliseconds to delay before readout to allow shutter to close */ /* Add to 30 ms to turn the amps back on so we have a total delay time of 500 ms for shutter close */
 
+#define _NSAMPLES           10  /* Placeholder for number of samples*/
+
 /** ---------------------------------------------------------------------------
  * CDS-Deinterlace options
  */
@@ -109,3 +111,6 @@
 /* Output gate */
 #define _OG_CLOCK_LOW         -8.0
 #define _OG_CLOCK_HIGH        -4.0
+
+/* NOP Clock level */
+#define _CLOCK_NOP            0.0

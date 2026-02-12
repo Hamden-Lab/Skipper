@@ -40,7 +40,7 @@
 #define Spare1	3 : 5  /* Spare clock channel      		*/
 #define Spare2	3 : 6  /* Spare clock channel      		*/
 #define Spare3	3 : 7  /* Spare clock channel      		*/
-#define Spare4  3 : 8  /* Spare clock channel                   */
+#define NOP  3 : 8  /* Spare clock channel                   */
                 
 #define P2U	4 : 1 /* Parallel phase 2 (Upper half)                 */
 #define P2L	4 : 2 /* Parallel phase 2 (Lower half)       	       */

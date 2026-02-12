@@ -30,6 +30,7 @@ param Lines=_LINES_PER_TAP
 param Pixels=_PIXELS_PER_TAP
 param PxByFour=_PIXBYFOUR
 param IdleLines=_IDLE_LINES
+param Skips=_NSAMPLES
 
 /** ---------------------------------------------------------------------------
  * @fn     MAIN
@@ -84,8 +85,8 @@ SEQUENCE DoExpose {
   if ShutterEnable OpenShutter();      // don't even try to open shutter unless enabled
   if exptime MilliSec(exptime);
   wCloseShutter();
-  //  if exptime DoShutterDelay(shutdelay);
-  //  DoScienceReadout();
+  if exptime DoShutterDelay(shutdelay);
+  DoScienceReadout();
   return;
 }
 //
@@ -104,32 +105,50 @@ SEQUENCE DoAbort {
   Abort--;
   GOTO WaitForExpose();
 }
-//
-//SEQUENCE DoShutterDelay {
-//  Wait1ms();
-//  return;
-//}
-//
-//SEQUENCE DoScienceReadout {
+
+SEQUENCE DoShutterDelay {
+  Wait1ms();
+  return;
+}
+
+SEQUENCE DoScienceReadout {
+  // These are ZTF specific
 //  SetParallelTransfer();                                         /*   0.01 us*/
 //  SetParallelTransferConcurrent();  /* Move Integrated charge to AB3 and CD4 here */
 //  TPixel(Pixels); /* initial serial sweepout */
 //  SerialReceiving();                                             /*   0.21 us*/
-//
-///* Do a clamp and reset since things were sitting during exposure and waiting for readout */
-///* This is an attempt to make the first line the same as other lines */
-//  wReset();
-//  Wait1us();
-//  wUnsetReset();  /* Do we move this until the end of the BLC and ADC Clamps? */
-//  ADClamp();
-//  Wait1us();
-//  ADClamp_();
-//  
-//  wFrame();                                                      /*   0.01 us*/
-//  ScienceRead(SplitLines);                                       /*3257.65 us*/
-//  SerialReceiving();   /* Put serial clocks in ready for charge state after readout */
-//  return;   /***/
-//}
+
+  HorizontalStepNoConvert(Pixels); /* initial serial sweepout */
+
+/* Do a clamp and reset since things were sitting during exposure and waiting for readout */
+/* This is an attempt to make the first line the same as other lines */
+  wReset();
+  Wait1us();
+  //  wUnsetReset();  /* Do we move this until the end of the BLC and ADC Clamps? */
+  ADClamp();
+  Wait1us();
+  ADClamp_();
+  
+  wFrame();                                                      /*   0.01 us*/
+  ScienceReadLTA(SplitLines);                                       /*3257.65 us*/
+  SerialReceiving();   /* Put serial clocks in ready for charge state after readout */
+  return;   /***/
+}
+
+SEQUENCE ScienceReadLTA {
+  Vertical();  // Parallel shift
+  wLine();
+  PixelAndSkip(Pixels);
+  return;
+}
+
+SEQUENCE PixelAndSkip {
+  HorizontalStepToConvert(); // puts a charge packet in SW ready for skipping
+  wSkipper(Skips);
+  return;
+}
+
+
 //
 // 
 //SEQUENCE ScienceRead {
